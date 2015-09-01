@@ -1,0 +1,59 @@
+<html>
+<head>
+	<title>Survey with Sockets</title>
+	<style type="text/css">
+		#formBox {
+			margin: 0 auto;
+			border: solid silver 2px;
+			width: 300px;
+		}
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		var socket = io.connect();
+
+    		$('#survey_form').submit(function(e){
+    			e.preventDefault();
+    			socket.emit('posting_form', {
+    				name: $('#name').val(),
+    				location: $('#location').val(),
+    				language: $('#language').val(),
+    				comment: $('#comment').val()
+    			});
+    		});
+    		socket.on('updated_message', function(data){
+    			$('#message').html("You emitted the following information to the server" + JSON.stringify(data.response));
+    		});
+    		socket.on('rand_numb', function(data){
+    			$("#rand_div").html("Your randm number between 1 and 1000 is: " + data.response);
+    		});
+    	});
+    </script>
+</head>
+<body>
+	<div id='message'></div>
+	<div id='rand_div'></div>
+	<div id='formBox'>
+		<form action='' id='survey_form'>
+			<p>Your Name: <input type='text' name='name' id='name'></p>
+			<p>Dojo Location: 
+				<select name='location' id='location'>
+					<option>Bellevue</option>
+					<option>San Jose</option>
+					<option>Compton</option>
+				</select></p>
+			<p>Favorite Language: 
+				<select name='language' id='language'>
+					<option>JavaScript</option>
+					<option>PHP</option>
+					<option>Korean</option>
+				</select></p>
+			<p>Comment(optional):</p>
+			<textarea name='comment' id='comment'></textarea>
+			<p><input type='submit' id="submit" value='submit'></p>
+		</form>
+	</div>
+</body>
+</html>
